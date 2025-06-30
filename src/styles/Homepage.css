@@ -1,0 +1,40 @@
+.homepage-container {
+    padding: 40px 20px;
+    text-align: center;
+    background-color: #f8f8f8;
+    min-height: 70vh;
+  }
+  
+  .homepage-container h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    color: #222;
+  }
+  
+  .homepage-container p {
+    font-size: 1.2rem;
+    color: #555;
+    margin-bottom: 30px;
+  }
+  
+  .homepage-actions {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+  }
+  
+  .homepage-actions button {
+    padding: 12px 24px;
+    font-size: 1rem;
+    border: none;
+    background-color: #000;
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  
+  .homepage-actions button:hover {
+    background-color: #333;
+  }
+  

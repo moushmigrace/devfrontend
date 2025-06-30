@@ -1,0 +1,30 @@
+/* src/components/Header.css */
+
+.header {
+    background-color: #000;
+    color: #fff;
+    padding: 20px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .logo-area {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  
+  .logo {
+    height: 60px;
+    width: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #fff;
+  }
+  
+  .slogan {
+    font-size: 1.4rem;
+    font-weight: 500;
+  }
+  

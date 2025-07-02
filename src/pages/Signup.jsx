@@ -34,11 +34,11 @@ const Signup = () => {
     try {
       const res = await api.post("/signup", form);
       alert(res.data.message);
-      clearForm(); // Clear form on success
-      navigate("/homepage"); // Redirect to homepage
+      clearForm(); 
+      navigate("/homepage"); 
     } catch (err) {
       alert(err.response?.data || "Signup failed");
-      clearForm(); // Optional: clear even on failure
+      clearForm(); 
     }
   };
 

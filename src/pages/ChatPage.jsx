@@ -42,80 +42,89 @@ const ChatPage = () => {
 
   // Setup Socket
   useEffect(() => {
-    const socket = io("http://localhost:7777", {
-      transports: ["websocket"],
-      withCredentials: true,
-    });
 
+    const token = localStorage.getItem("token"); // ✅ must exist
+  if (!token) {
+    console.error("❌ No JWT token found in localStorage");
+    return;
+  }
+
+  const socket = io("http://localhost:7777", {
+    transports: ["websocket"],
+    withCredentials: true,
+    auth: { token }, // ✅ Token sent here
+  });
+  
     socketRef.current = socket;
-
+  
     socket.on("connect", () => {
       console.log("✅ [CHAT SOCKET] Connected:", socket.id);
       setSocketReady(true);
-
-      socket.emit("joinChat", {
-        userId,
-        targetUserId,
-        firstName,
-      });
+      socket.emit("joinChat", { targetUserId }); // Only targetUserId sent
     });
+    socket.on("connect_error", (err) => {
+      console.error("❌ Socket connection error:", err.message);
+    });
+    
 
+  
     socket.on("messageReceived", (msg) => {
-      console.log("📥 Message received:", msg);
       setChat((prev) => ({
         ...prev,
         messages: [...prev.messages, msg],
       }));
     });
-
+    
+    
+  
     socket.on("disconnect", () => {
       console.warn("❌ Socket disconnected");
       setSocketReady(false);
     });
-
+  
     return () => {
       socket.disconnect();
       socketRef.current = null;
     };
-  }, [userId, targetUserId]);
+  }, [targetUserId]);
   const clearChat = async () => {
     try {
       await api.delete(`/chat/${targetUserId}`);
-      setChat({ messages: [], participants: [userId, targetUserId] });
+      fetchChat(); // Re-fetch updated chat (messages will be empty now)
     } catch (err) {
       console.error("❌ Failed to clear chat:", err);
     }
   };
+
   
-  // Send Message
+
+  
   const sendMessage = () => {
+    if (userId === targetUserId) {
+      alert("❌ Cannot chat with yourself.");
+      return;
+    }
+    
+
     const socket = socketRef.current;
     if (!message.trim()) return;
-
+  
     if (!socket || !socket.connected) {
       alert("❌ Socket not connected!");
       return;
     }
-
+  
     const msgPayload = {
-      userId,
       targetUserId,
       text: message,
-      firstName,
-      lastName,
     };
-
+  
     console.log("📤 Sending message:", msgPayload);
     socket.emit("sendMessage", msgPayload);
-
-    // Add message to UI immediately
-    setChat((prev) => ({
-      ...prev,
-      messages: [...prev.messages, { ...msgPayload, senderId: userId }],
-    }));
-
-    setMessage("");
+  
+    setMessage(""); // Clear input
   };
+  
 
   useEffect(() => {
     const el = document.getElementById("chat-body");
@@ -140,17 +149,32 @@ const ChatPage = () => {
           </div>
         )}
 
-        <div id="chat-body" className="chat-body">
-          {chat.messages.length === 0 ? (
-            <p className="no-messages">No messages yet.</p>
-          ) : (
-            chat.messages.map((m, i) => (
-              <div key={i} className={`message ${m.senderId === userId ? "outgoing" : "incoming"}`}>
-                <p className="message-text">{m.text}</p>
-              </div>
-            ))
-          )}
+<div className="chat-body">
+  {chat.messages.length === 0 ? (
+    <p className="no-messages">No messages yet.</p>
+  ) : (
+    chat.messages.map((m, i) => {
+      const isOutgoing = m.senderId === userId;
+
+      return (
+        <div
+          key={i}
+          className={`message ${isOutgoing ? "outgoing" : "incoming"}`}
+        >
+          <p className="message-text">{m.text}</p>
+          <span className="message-time">
+            {new Date(m.timestamp || Date.now()).toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            })}
+          </span>
         </div>
+      );
+    })
+  )}
+</div>
+
+
 
         <div className="chat-input">
           <input

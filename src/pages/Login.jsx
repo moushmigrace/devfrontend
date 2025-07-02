@@ -23,14 +23,24 @@ const Login = () => {
     e.preventDefault();
     try {
       const res = await api.post("/login", form);
-      alert("Welcome " + res.data.firstName);
-      clearForm(); // Clear form after successful login
+  
+      // ✅ Save token and user details
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("userId", res.data.user._id);
+      localStorage.setItem("firstName", res.data.user.firstName);
+      localStorage.setItem("lastName", res.data.user.lastName);
+  
+      console.log("📦 Token stored:", res.data.token);
+  
+      alert("Welcome " + res.data.user.firstName);
+      clearForm(); 
       navigate("/homepage");
     } catch (err) {
       alert("Login failed. Please check your credentials.");
-      clearForm(); // Also clear on failed login
+      clearForm(); 
     }
   };
+  
 
   return (
     <>

@@ -128,4 +128,30 @@
     background-color: #0b5d50;
     transform: scale(0.96);
   }
-  
+
+  .message {
+  max-width: 60%;
+  padding: 10px;
+  margin: 8px;
+  border-radius: 10px;
+  position: relative;
+}
+
+.outgoing {
+  align-self: flex-end;
+  background-color: #d1f0ff;
+  text-align: right;
+}
+
+.incoming {
+  align-self: flex-start;
+  background-color: #f1f1f1;
+  text-align: left;
+}
+
+.message-time {
+  font-size: 0.75rem;
+  color: #888;
+  margin-top: 5px;
+  display: block;
+}
